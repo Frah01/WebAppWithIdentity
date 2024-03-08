@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Abstractions;
 using WebAppWithIdentity.Models;
 using WebAppWithIdentity.ViewModels;
 
@@ -8,10 +9,12 @@ namespace WebAppWithIdentity.Controllers
     public class AccountController : Controller
     {
         private readonly SignInManager<AppUser> signInManager;
+        private readonly UserManager<AppUser> userManager;
 
-        public AccountController(SignInManager<AppUser> signInManager)
+        public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
         {
             this.signInManager = signInManager;
+            this.userManager = userManager;
         }
         public IActionResult Login()
         {
@@ -20,7 +23,8 @@ namespace WebAppWithIdentity.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginVM model)
         {
-         
+            
+
             if (ModelState.IsValid)
             {
                 var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
@@ -34,13 +38,43 @@ namespace WebAppWithIdentity.Controllers
             ModelState.AddModelError(string.Empty, "Invalid Login Attempt - ModelState is not valid");
             return View(model);
         }
+
         public IActionResult Register()
         {
             return View();
         }
-        public IActionResult Logout()
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterVM model)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                AppUser user = new()
+                {
+                    Name = model.Name,
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Address = model.Address,
+                };
+                var result = await userManager.CreateAsync(user,model.Password!);
+
+                if (result.Succeeded)
+                {
+                    await signInManager.SignInAsync(user, false);
+
+                    return RedirectToAction("Index", "Home");
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+            return View(model);
+        }
+        public async Task<IActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

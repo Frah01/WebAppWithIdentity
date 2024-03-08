@@ -1,5 +1,53 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@using WebAppWithIdentity.ViewModels;
+@model RegisterVM
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="offset-3 col-6">
+        <section class="d-flex justify-content-center">
+            <div class="card shadow">
+                <div class="card-body ">
+                    <form asp-action="Register" method="post">
+                        <h2 class="text-center text-primary">Create new account</h2>
+                        <hr />
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Name" class="form-control" autocomplete="Name" aria-required="true" placeholder="Write your name.." />
+                            <label asp-for="Name">Name</label>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com.." />
+                            <label asp-for="Email">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Address" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Write your address.." />
+                            <label asp-for="Address">Address</label>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Write your password.." />
+                            <label asp-for="Password">Password</label>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Confirm password.." />
+                            <label asp-for="ConfirmPassword">Confirm Password</label>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                        <p>
+                            <a asp-action="Login">Already registered? Log in.</a>
+                        </p>
+                        <input type="submit" value="Register" class="btn btn-primary" />
+                    </form>
+                </div>
+            </div>
+        </section>   
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -5,7 +5,6 @@ using WebAppWithIdentity.Models;
 
 namespace WebAppWithIdentity.Controllers
 {
-    [Route("[Controller]/[action]")]
     [Authorize]
     public class HomeController : Controller
     {
