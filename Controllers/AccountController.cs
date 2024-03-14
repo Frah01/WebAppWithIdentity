@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Abstractions;
 using WebAppWithIdentity.Models;
 using WebAppWithIdentity.ViewModels;
 
-namespace WebAppWithIdentity.Controllers
+namespace WebApp8WithIdentity.Controllers
 {
+    [EnableCors(PolicyName = "enablecorsfromreact")]
     public class AccountController : Controller
     {
         private readonly SignInManager<AppUser> signInManager;

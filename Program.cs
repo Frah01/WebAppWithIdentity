@@ -9,7 +9,23 @@ namespace WebAppWithIdentity
     {
         public static void Main(string[] args)
         {
+            var ReactSpecificOrigins = "enablecorsfromreact";
+
             var builder = WebApplication.CreateBuilder(args);
+
+            // Add CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: ReactSpecificOrigins,
+                                       builder =>
+                                       {
+                                           builder.WithOrigins("http://localhost:3000")
+                                   .AllowAnyHeader()
+                                   .AllowAnyMethod();
+                                       });
+            });
+
+
 
             var connectionString = builder.Configuration.GetConnectionString("WebAppDevConnection");
             builder.Services.AddControllersWithViews();
@@ -44,7 +60,18 @@ namespace WebAppWithIdentity
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            // InvalidOperationException: Endpoint WebApp8WithIdentity.Controllers.AccountController.Login(WebApp8WithIdentity)
+            // contains CORS metadata, but a middleware was not found that supports CORS.
+            // Configure your application startup by adding app.UseCors() in the application startup code.
+            // If there are calls to app.UseRouting() and app.UseEndpoints(...), the call to app.UseCors() must go between them.
+
             app.UseRouting();
+
+            // CORS
+            app.UseCors(ReactSpecificOrigins);
+
+
+
             app.UseAuthentication();
             app.UseAuthorization();
 
