@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Abstractions;
 using WebAppWithIdentity.Models;
 using WebAppWithIdentity.ViewModels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApp8WithIdentity.Controllers
 {
@@ -41,6 +42,15 @@ namespace WebApp8WithIdentity.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<bool> LoginFromReact([FromForm] LoginVM model)
+        {
+            //Login from React
+            var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
+            return result.Succeeded;
+        }
+
+
         public IActionResult Register()
         {
             return View();
@@ -58,25 +68,41 @@ namespace WebApp8WithIdentity.Controllers
                     Email = model.Email,
                     Address = model.Address,
                 };
-                var result = await userManager.CreateAsync(user,model.Password!);
+                IdentityResult result = await userManager.CreateAsync(user,model.Password!);
 
                 if (result.Succeeded)
                 {
-                    await signInManager.SignInAsync(user, false);
+                    await signInManager.SignInAsync(user, isPersistent: false);
 
                     return RedirectToAction("Index", "Home");
                 }
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError("", error.Description);
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
+            ModelState.AddModelError(string.Empty, "ModelState is not valid");
             return View(model);
         }
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public async Task<bool> LogoutFromReact()
+        {
+            //Logout from react
+            try
+            {
+                await signInManager.SignOutAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
